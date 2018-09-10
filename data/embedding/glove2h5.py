@@ -7,9 +7,9 @@ glove_vectors = [
     for line in open('glove.840B.300d.txt', 'r')
 ]
 
-vocab = [line[0] for line in glove_vectors]
+vocab = [' '.join(line[:-300]) for line in glove_vectors]
 vectors = np.array(
-    [[float(val) for val in line[1:]] for line in glove_vectors]
+    [[float(val) for val in line[-300:]] for line in glove_vectors]
 ).astype(np.float32)
 vocab = '\n'.join(vocab)
 
