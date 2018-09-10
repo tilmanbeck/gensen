@@ -142,12 +142,11 @@ class GenSenSingle(nn.Module):
     def _load_params(self):
         """Load pretrained params."""
         # Read vocab pickle files
-        model_vocab = pickle.load(
-            open(os.path.join(
-                self.model_folder,
-                '%s_vocab.pkl' % (self.filename_prefix)
-            ))
-        )
+
+        fname = os.path.join(self.model_folder, '%s_vocab.pkl' % (self.filename_prefix))
+        file = open(fname, 'rb')
+        model_vocab = pickle.load(file, encoding='latin1')
+        file.close()
 
         # Word to index mappings
         self.word2id = model_vocab['word2id']
@@ -296,8 +295,8 @@ class GenSenSingle(nn.Module):
             for sentence in sorted_sentences
         ]
 
-        sentences = Variable(torch.LongTensor(sentences), volatile=True)
-        rev = Variable(torch.LongTensor(rev), volatile=True)
+        sentences = Variable(torch.LongTensor(sentences), requires_grad=False)
+        rev = Variable(torch.LongTensor(rev), requires_grad=False)
         lengths = sorted_lens
 
         if self.cuda:
