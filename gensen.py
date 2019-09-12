@@ -127,7 +127,7 @@ class GenSenSingle(nn.Module):
 
     def __init__(
         self, model_folder, filename_prefix,
-        pretrained_emb, cuda=False, gpu=-1, rnn_type='GRU'
+        pretrained_emb, cuda=False, rnn_type='GRU'
     ):
         """Initialize params."""
         super(GenSenSingle, self).__init__()
@@ -135,7 +135,6 @@ class GenSenSingle(nn.Module):
         self.filename_prefix = filename_prefix
         self.pretrained_emb = pretrained_emb
         self.cuda = cuda
-        self.gpu = gpu
         self.rnn_type = rnn_type
         self._load_params()
         self.vocab_expanded = False
@@ -164,7 +163,7 @@ class GenSenSingle(nn.Module):
             encoder_model = torch.load(os.path.join(
                 self.model_folder,
                 '%s.model' % (self.filename_prefix)
-            ), map_location={'cuda'+str(self.gpu): 'gpu'})
+            ), map_location='gpu')
 
         # Initialize encoders
         self.encoder = Encoder(
