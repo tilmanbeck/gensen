@@ -127,14 +127,13 @@ class GenSenSingle(nn.Module):
 
     def __init__(
         self, model_folder, filename_prefix,
-        pretrained_emb, cuda=False, rnn_type='GRU'
+        pretrained_emb, rnn_type='GRU'
     ):
         """Initialize params."""
         super(GenSenSingle, self).__init__()
         self.model_folder = model_folder
         self.filename_prefix = filename_prefix
         self.pretrained_emb = pretrained_emb
-        self.cuda = cuda
         self.rnn_type = rnn_type
         self._load_params()
         self.vocab_expanded = False
@@ -154,16 +153,14 @@ class GenSenSingle(nn.Module):
         self.task_word2id = self.word2id
         self.id2word = self.id2word
 
-        if not self.cuda:
-            encoder_model = torch.load(os.path.join(
-                self.model_folder,
-                '%s.model' % (self.filename_prefix)
-            ), map_location='cpu')
+        if torch.cuda.is_available():
+            map_location = 'cuda' + str(torch.cuda.current_device())
         else:
-            encoder_model = torch.load(os.path.join(
-                self.model_folder,
-                '%s.model' % (self.filename_prefix)
-            ), map_location='gpu')
+            map_location = 'cpu'
+        encoder_model = torch.load(os.path.join(
+            self.model_folder,
+            '%s.model' % (self.filename_prefix)
+        ), map_location=map_location)
 
         # Initialize encoders
         self.encoder = Encoder(
